@@ -1,0 +1,102 @@
+import { replaceSqrt } from "../components/calculator/Calculator";
+// import { render, screen, fireEvent } from "@testing-library/react";
+// import { MemoryRouter } from "react-router-dom";
+// import CitiesScreen from "../components/cities/CitiesScreen";
+// import { Switch } from "@mui/material";
+
+
+describe('test replaceSqrt', () => {
+  test('When it has no sqrt symbol', () => {
+      let result = replaceSqrt('2+2');
+      expect(result).toBe('2+2');
+  });
+
+  test('when it has one sqrt symbol', () => {
+    let result = replaceSqrt('\u221A64');
+    expect(result).toBe('((64)**0.5)');
+  });
+
+  test('When it has several sqrt symbols', () => {
+    let result = replaceSqrt('\u221A64\u221A16');
+    expect(result).toBe('((64)**0.5)((16)**0.5)');
+  });
+
+  test('When it has nested sqrt symbols', () => {
+    let result = replaceSqrt('\u221A\u221A64');
+    expect(result).toBe('((((64)**0.5))**0.5)');
+  });
+});
+
+// describe("CitiesScreen", () => {
+//   test("renders Controls with the possible actions", () => {
+    
+// 	});
+//   test("When click on ( add '(' to operation", () => {
+    
+// 	});
+//   test("When click on ) add ')' to operation", () => {
+    
+// 	});
+//   // ... and so on with all the actions
+//   test("When click on ( any operatio is 'str', get rid of the 'str'", () => {
+    
+// 	});
+//   // ... and so on with all the actions
+//   test("When click on '=', change operation for function'", () => {
+    
+// 	});
+//   test("When click on '=' disble all the buttons, except for 'AC'", () => {
+    
+// 	});
+//   test("When changing operation for command and set command, render the textfield", () => {
+    
+// 	});
+//   test("When setting the operation, render the field", () => {
+    
+// 	});
+//   test("When click on 'str' clear the field", () => {
+    
+// 	});
+//   test("Calculate the total cost according to the operation", () => {
+//     // Test all the four operations
+// 	});
+//   test("Calculate the total cost according to the operation", () => {
+//     // Test all the four operations
+// 	});
+//   test("When hit enter, make the calculation", () => {
+//     // Test all the four operations
+// 	});
+//   test("When click on '=', make the calculation", () => {
+//     // Test all the four operations
+// 	});
+// });
+
+// describe('test calculator_frontend', function() {
+//   it('test calculator-frontend.removeNotValidCharacters', function(done) {
+//       assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1s'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1s1'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1s1s'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1s1s1'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1s1s1s'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1s1s1s1'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1s1s1s1s'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1s1s1s1s1'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1s1s1s1s1s'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1s1s1s1s1s1'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1s1s1s1s1s1s'), '1+2-3*4/5+6');
+//     assert.equal(calculator_frontend.removeNotValidCharacters('1+2-3*4/5+6s1s1s1s1s1s1s1s1'), '1+2-3*4/5+6');
+//   })
+// });
+
+// describe('test calculator_frontend', function() {
+//   it('test calculator-frontend.isExpressionValid', function(done) {
+//       let result = calculator_frontend.isExpressionValid('2+2');
+//       assert.equal(result, true);
+//       done();
+//   })
+// });

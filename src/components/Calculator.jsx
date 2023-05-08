@@ -1,5 +1,11 @@
 import { Alert, Button, FormControl, Paper, TextField } from "@mui/material";
 import React, { useState } from "react";
+import serviceCaller from "../services/serviceCaller";
+import packageJson from '../../package.json';
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { updateBalance } from "../store/sessionSlice";
+import { useDispatch } from 'react-redux';
 
 // All the actions supported by the calculator
 const actions = [
@@ -10,12 +16,15 @@ const actions = [
   '0', '.', 'STR', '=', 
 ];
 
-const Calculator = () => {
+const Calculator = ({logout, operations}) => {
+  const dispatch = useDispatch();
+  const accessToken = useSelector((state) => state.session.accessToken);
   const [command, setCommand] = useState('');
-  const [operation, setOperation] = useState('');
-  const [enableArithmeticButtons, setEnableArithmeticButtons] = useState('');
+  const [statement, setStatement] = useState('');
+  const [result, setResult] = useState('');
   const [error, setError] = useState('');
   const [disableCalculator, setDisableCalculator] = useState(false);
+  const [operationSelected, setOperationSelected] = useState('');
 
   // Define the event of each action
   const getEvent = (action) => {
@@ -24,15 +33,16 @@ const Calculator = () => {
         return () => {
           setDisableCalculator(false);
           setCommand('');
-          setOperation('');
+          setStatement('');
+          setResult('');
         };
       case 'STR':
         return () => {
-          setOperation(':str');
+          setStatement(':str');
         };
       case '\u221A': {
         return () => {
-          setOperation('\u221A');
+          setStatement('\u221A');
         };
       };
       case '\u232B':
@@ -45,9 +55,32 @@ const Calculator = () => {
         };
       default:
         return () => {
-          debugger;
-          setOperation(operation === ':str' || operation === '0' ? action : operation + action);
+          setStatement(statement === ':str' || statement === '0' ? action : statement + action);
         };
+    }
+  };
+
+  const reviewOperation = () => {
+    if (statement.indexOf('+') !== -1) {
+      setOperationSelected('addition');
+    }
+    else if (statement.indexOf('-') !== -1) {
+      setOperationSelected('substraction');
+    }
+    else if (statement.indexOf('*') !== -1) {
+      setOperationSelected('multiplication');
+    }
+    else if (statement.indexOf('/') !== -1) {
+      setOperationSelected('division');
+    }
+    else if (statement.indexOf('\u221A') !== -1) {
+      setOperationSelected('square_root');
+    }
+    else if (statement.indexOf('random_string') !== -1) {
+      setOperationSelected('random_string');
+    }
+    else {
+      setOperationSelected('');
     }
   };
 
@@ -57,35 +90,55 @@ const Calculator = () => {
   };
 
   React.useEffect(() => {
-    setEnableArithmeticButtons(hasArithmeticSymbols(operation));
-  }, [operation]);
+    reviewOperation();
+  }, [statement]);
+
+  function saveOperation() {
+    const headers = {
+      Authorization: 'Bearer ' + accessToken,
+    };
+    
+    axios.post(`${packageJson.services_url}/api/v1/operation`, {statement: statement}, { headers })
+      .then(response => {
+        setResult(response.data.result);
+        dispatch(updateBalance(response.data.balance));
+      })
+      .catch(error => {
+        if (error.response.status === 405 || error.response.status === 401) {
+          logout();
+        }
+        else {
+          alert(JSON.stringify(error.response.data));
+        }
+      });
+  }
 
   const calculate = () => {
-    setCommand(operation);
-    setOperation('result');
+    setCommand(statement);
     setDisableCalculator(true);
+    saveOperation();
   };
 
   const deleteTerm = () => {
-    if (operation === ':str')
-      setOperation('');
+    if (statement === ':str')
+      setStatement('');
     else
-      setOperation(operation.substring(0, operation.length - 1));
+      setStatement(statement.substring(0, statement.length - 1));
   };
+
 	return (
 		<Paper className="calculator">
-			<h1>Calculator</h1>
+      {!!operationSelected &&
       <Alert severity="info">
-        <h3>Balance:</h3>
-        <p>$10,000</p>
-        <h3>Operation cost:</h3>
-        <p>$1,000</p>
-      </Alert>
+        Statement cost: {operations.filter(
+          op => op.type == operationSelected)[0]
+          .cost.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+        </Alert>}
 			<FormControl fullWidth sx={{ m: 1 }}>
 				<TextField
-          id='operation-field'
+          id='statement-field'
           label={command}
-          value={operation}
+          value={result || statement}
           error={Boolean(error)}
           helperText={error}
           multiline
@@ -104,8 +157,9 @@ const Calculator = () => {
         <>
         {actions.map((action)=> {
           return <Button key={action} variant="contained" disabled={
-            (action != 'AC' && disableCalculator) || 
-            (hasArithmeticSymbols(action) && enableArithmeticButtons)
+            (action !== 'AC' && disableCalculator) || 
+            // (!!operationSelected)
+            (hasArithmeticSymbols(action) && !!operationSelected)
           } onClick={() => {
             getEvent(action)();
           }}>{action}</Button>

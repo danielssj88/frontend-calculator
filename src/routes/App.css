@@ -9,6 +9,21 @@
   padding: 10px;
 }
 
+.calculator-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.calculator-container li {
+  margin: 10px 0;
+}
+
+.calculator-container p {
+  margin: 0;
+  font: 0.8em sans-serif;
+  color: rgba(0, 0, 0, 0.6);
+}
+
 .calculator {
   display: flex;
   flex-direction: column;

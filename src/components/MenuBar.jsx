@@ -78,6 +78,7 @@ export default function MenuBar({logout}) {
           </Typography>
           {auth && (
             <div>
+              {localStorage.getItem('username')}
               <IconButton
                 size="large"
                 aria-label="account of current user"

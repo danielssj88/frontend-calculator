@@ -60,7 +60,7 @@ const App = () => {
         },
         {
           path: "/user-records",
-          element: ( isLoggedIn ? <UserRecords /> : <Navigate to='/login' /> )
+          element: ( isLoggedIn ? <UserRecords logout={logoutHandler} /> : <Navigate to='/login' /> )
         }
       ]
     }

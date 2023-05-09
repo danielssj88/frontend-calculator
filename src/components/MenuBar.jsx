@@ -9,9 +9,10 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { useNavigate } from 'react-router-dom';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import { useSelector } from 'react-redux';
 
 export default function MenuBar({logout}) {
-  const auth = true;
+  const isLoggedIn = useSelector((state) => state.session.isLoggedIn);
   const [anchorMainEl, setAnchorMainEl] = React.useState(null);
   const [anchorUserEl, setAnchorUserEl] = React.useState(null);
   const navigate = useNavigate();
@@ -36,47 +37,51 @@ export default function MenuBar({logout}) {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-controls="main-menu-appbar"
-            onClick={handleMainMenu}
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorMainEl}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={Boolean(anchorMainEl)}
-            onClose={handleCloseMain}
-          >
-            <MenuItem onClick={() => {
-              handleCloseMain()
-              navigate('/calculator')
-            }}>Calculator</MenuItem>
-            <MenuItem onClick={() => {
-              handleCloseMain()
-              navigate('/user-records')
-            }}>User Records</MenuItem>
-          </Menu>
+          {isLoggedIn && (
+            <>
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-controls="main-menu-appbar"
+                onClick={handleMainMenu}
+                aria-label="menu"
+                sx={{ mr: 2 }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorMainEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorMainEl)}
+                onClose={handleCloseMain}
+              >
+                <MenuItem onClick={() => {
+                  handleCloseMain()
+                  navigate('/')
+                }}>Calculator</MenuItem>
+                <MenuItem onClick={() => {
+                  handleCloseMain()
+                  navigate('/user-records')
+                }}>User Records</MenuItem>
+              </Menu>
+            </>
+          )}
           <Typography style={{ cursor: 'pointer' }} variant="h6" component="div" sx={{ flexGrow: 1 }} onClick = {() => {
             navigate('/');
           }}>
             Calculator
           </Typography>
-          {auth && (
+          {isLoggedIn && (
             <div>
               {localStorage.getItem('username')}
               <IconButton
